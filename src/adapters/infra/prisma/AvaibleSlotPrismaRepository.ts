@@ -1,0 +1,49 @@
+import { prismaClient } from "@/adapters/infra/prisma/client"
+import { AvailableSlot } from "@/core/entities/AvaibleSlot"
+import { AvailableSlotRepository } from "@/core/repositories/AvaibleSlotRepository"
+import { ApplicationError } from "@/shared/Errors"
+import { AvailableSlotErrorType } from "@/shared/errors/AvaibleSlotErrorType"
+import { AvailableSlotMapper } from "@/shared/mappers/AvaibleSlotMapper"
+
+
+
+export class AvailableSlotRepositoryPrisma implements AvailableSlotRepository {
+    async findByDoctorId(doctorId: string): Promise<AvailableSlot[]> {
+        try {
+            const slots = await prismaClient.availableSlot.findMany({ where: { doctorId } })
+            return slots.map(AvailableSlotMapper.toDomain)
+        } catch (error) {
+            throw new ApplicationError({
+                message: 'Erro ao buscar horários disponíveis',
+                code: 500,
+                type: AvailableSlotErrorType.SLOT_NOT_FOUND
+            })
+        }
+    }
+
+    async exists(doctorId: string, dateTime: Date): Promise<boolean> {
+        try {
+            const existing = await prismaClient.availableSlot.findFirst({ where: { doctorId, dateTime } })
+            return !!existing
+        } catch (error) {
+            throw new ApplicationError({
+                message: 'Erro ao verificar horário',
+                code: 500,
+                type: AvailableSlotErrorType.SLOT_ALREADY_EXISTS
+            })
+        }
+    }
+
+    async save(slot: AvailableSlot): Promise<void> {
+        try {
+            const data = AvailableSlotMapper.toPersistence(slot)
+            await prismaClient.availableSlot.create({ data })
+        } catch (error) {
+            throw new ApplicationError({
+                message: 'Erro ao salvar horário',
+                code: 500,
+                type: AvailableSlotErrorType.VALIDATION_ERROR
+            })
+        }
+    }
+}
