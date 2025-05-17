@@ -1,9 +1,14 @@
+import { AuthService } from '@/adapters/auth/AuthService'
 import { AvailableSlotRepositoryPrisma } from '@/adapters/infra/prisma/AvaibleSlotPrismaRepository'
+import { UserRepositoryPrisma } from '@/adapters/infra/prisma/UserPrismaRepository'
 import { DoctorController } from '@/application/controller/DoctorController'
 import { AuthMiddleware } from '@/application/middleware/auth-middleware'
 import { CreateAvailableSlotUseCase } from '@/application/use-cases/available-slot/CreateAvaibleSlot'
 import { GetAvailableSlotsByDoctorUseCase } from '@/application/use-cases/available-slot/GetAvailableSlotsByDoctorUseCase'
+import { GetAllDoctorsUseCase } from '@/application/use-cases/user/patient/GetAllDoctorsUseCase'
 import { AvailableSlotRepository } from '@/core/repositories/AvaibleSlotRepository'
+import { UserRepository } from '@/core/repositories/UserRepository'
+import { IAuthService } from '@/core/services/IAuthService'
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common'
 
 
@@ -12,10 +17,15 @@ import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common'
     providers: [
         CreateAvailableSlotUseCase,
         GetAvailableSlotsByDoctorUseCase,
-        { provide: AvailableSlotRepository, useClass: AvailableSlotRepositoryPrisma }
+        GetAllDoctorsUseCase,
+        { provide: AvailableSlotRepository, useClass: AvailableSlotRepositoryPrisma },
+        { provide: UserRepository, useClass: UserRepositoryPrisma },
+        { provide: IAuthService, useClass: AuthService },
+
+
     ]
 })
-export class MedicoModule {
+export class DoctorModule {
     configure(consumer: MiddlewareConsumer) {
         consumer
             .apply(AuthMiddleware)

@@ -6,6 +6,11 @@ import { GetSchedulingsByDoctorUseCase } from '@/application/use-cases/schedulin
 import { GetSchedulingsByPatientUseCase } from '@/application/use-cases/scheduling/GetSchedulingsByPatientUseCase'
 import { AuthMiddleware } from '@/application/middleware/auth-middleware'
 import { GetSchedulingsService } from '@/application/applicationServices/available-slot/GetSchedulingsService'
+import { IAuthService } from '@/core/services/IAuthService'
+import { AuthService } from '@/adapters/auth/AuthService'
+import { CreateSchedulingUseCase } from '@/application/use-cases/scheduling/CreateSchedulingUseCase'
+import { AvailableSlotRepository } from '@/core/repositories/AvaibleSlotRepository'
+import { AvailableSlotRepositoryPrisma } from '@/adapters/infra/prisma/AvaibleSlotPrismaRepository'
 
 @Module({
     controllers: [SchedulingController],
@@ -13,13 +18,18 @@ import { GetSchedulingsService } from '@/application/applicationServices/availab
         GetSchedulingsService,
         GetSchedulingsByDoctorUseCase,
         GetSchedulingsByPatientUseCase,
-        { provide: SchedulingRepository, useClass: SchedulingRepositoryPrisma }
+        CreateSchedulingUseCase,
+        { provide: SchedulingRepository, useClass: SchedulingRepositoryPrisma },
+        { provide: AvailableSlotRepository, useClass: AvailableSlotRepositoryPrisma },
+        { provide: IAuthService, useClass: AuthService },
+
     ]
 })
 export class SchedulingModule {
     configure(consumer: MiddlewareConsumer) {
         consumer
             .apply(AuthMiddleware)
-            .forRoutes({ path: 'agendamentos', method: RequestMethod.GET })
+            .forRoutes({ path: 'agendamentos', method: RequestMethod.GET }, { path: 'agendamentos', method: RequestMethod.POST })
+
     }
 }

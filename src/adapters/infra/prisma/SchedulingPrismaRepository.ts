@@ -1,5 +1,6 @@
 import { prismaClient } from "@/adapters/infra/prisma/client"
-import { Scheduling } from "@/core/entities/Scheduling"
+import { SchedulingResponseDTOWithIncludes } from "@/application/dto/scheduling-response.dto"
+import { Scheduling, SchedulingWithUserData } from "@/core/entities/Scheduling"
 import { SchedulingRepository } from "@/core/repositories/SchedulingRepository"
 import { ApplicationError } from "@/shared/Errors"
 import { SchedulingErrorType } from "@/shared/errors/SchedulingErrorType"
@@ -27,6 +28,45 @@ export class SchedulingRepositoryPrisma implements SchedulingRepository {
         } catch (error) {
             throw new ApplicationError({
                 message: 'Erro ao buscar agendamentos do paciente',
+                code: 500,
+                type: SchedulingErrorType.SCHEDULING_NOT_FOUND
+            })
+        }
+    }
+    async findByDoctorIdWithRelations(doctorId: string): Promise<SchedulingResponseDTOWithIncludes[]> {
+        try {
+            const records = await prismaClient.scheduling.findMany({
+                where: { doctorId },
+                include: {
+                    doctor: { select: { id: true, name: true, email: true } },
+                    patient: { select: { id: true, name: true, email: true } }
+                }
+            })
+
+            return records.map(SchedulingMapper.toResponseWithIncludes)
+        } catch (error) {
+            throw new ApplicationError({
+                message: 'Erro ao buscar agendamentos do médico (com includes)',
+                code: 500,
+                type: SchedulingErrorType.SCHEDULING_NOT_FOUND
+            })
+        }
+    }
+
+    async findByPatientIdWithRelations(patientId: string): Promise<SchedulingResponseDTOWithIncludes[]> {
+        try {
+            const records = await prismaClient.scheduling.findMany({
+                where: { patientId },
+                include: {
+                    doctor: { select: { id: true, name: true, email: true } },
+                    patient: { select: { id: true, name: true, email: true } }
+                }
+            })
+
+            return records.map(SchedulingMapper.toResponseWithIncludes)
+        } catch (error) {
+            throw new ApplicationError({
+                message: 'Erro ao buscar agendamentos do paciente (com includes)',
                 code: 500,
                 type: SchedulingErrorType.SCHEDULING_NOT_FOUND
             })

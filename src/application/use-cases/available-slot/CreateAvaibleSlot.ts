@@ -39,7 +39,9 @@ export class CreateAvailableSlotUseCase implements UseCase<CreateAvailableSlotIn
             })
         }
 
-        const isCommercialTime = requestedDate.hour < 7 || requestedDate.hour >= 17
+        const isCommercialTime = requestedDate.hour > 7 || requestedDate.hour <= 17
+
+        console.log(requestedDate.hour)
 
         if (!isCommercialTime) {
             throw new ApplicationError({

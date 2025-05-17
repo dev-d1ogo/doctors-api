@@ -4,6 +4,18 @@ export interface SchedulingProps {
     patientId: string
     dateTime: Date
 }
+export type SchedulingWithUserData = Scheduling & {
+    doctor: {
+        id: string
+        name: string
+        email: string
+    }
+    patient: {
+        id: string
+        name: string
+        email: string
+    }
+}
 
 export class Scheduling {
     constructor(public readonly props: SchedulingProps) { }

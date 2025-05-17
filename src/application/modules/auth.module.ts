@@ -8,13 +8,15 @@ import { UserRepository } from '@/core/repositories/UserRepository';
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common'
 import { IAuthService } from '@/core/services/IAuthService';
 import { AuthMiddleware } from '@/application/middleware/auth-middleware';
+import { AuthenticateUserUseCase } from '@/application/use-cases/user/auth/Login';
 
 @Module({
     controllers: [AuthController],
     providers: [
         RegisterUserService,
         RegisterDoctorUseCase,
-        RegisterPatientUseCase, // ← ESSENCIAL: estava faltando
+        RegisterPatientUseCase,
+        AuthenticateUserUseCase,// ← ESSENCIAL: estava faltando
         { provide: IAuthService, useClass: AuthService },
         { provide: UserRepository, useClass: UserRepositoryPrisma }]
 })
