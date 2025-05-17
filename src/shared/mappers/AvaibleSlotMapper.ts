@@ -1,3 +1,4 @@
+import { AvailableSlotResponseDTO } from "@/application/dto/available-slot-response.dto"
 import { AvailableSlot } from "@/core/entities/AvaibleSlot"
 
 interface AvailableSlotRaw {
@@ -27,7 +28,11 @@ export class AvailableSlotMapper {
         return {
             id: slot.id,
             doctorId: slot.doctorId,
-            dateTime: slot.dateTime
+            dateTime: slot.dateTime.toISOString()
         }
+    }
+
+    static toResponseList(slots: AvailableSlot[]): AvailableSlotResponseDTO[] {
+        return slots.map(this.toHttp)
     }
 }

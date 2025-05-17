@@ -1,3 +1,4 @@
+import { DoctorResponseDTO } from "@/application/dto/doctor-response.dto"
 import { User } from "@/core/entities/User"
 import { UserRole } from "@/core/enums/UserRole"
 import { User as PrismaUser } from '@prisma/client'
@@ -40,5 +41,9 @@ export class UserMapper {
             email: user.email,
             role: user.role
         }
+    }
+
+    static toDoctorResponseList(users: User[]): DoctorResponseDTO[] {
+        return users.map(this.toHttp)
     }
 }

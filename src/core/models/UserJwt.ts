@@ -5,3 +5,9 @@ export interface UserJwt {
     email: string
     role: UserRole
 }
+
+declare module 'express' {
+    interface Request {
+        user?: UserJwt
+    }
+}

@@ -5,8 +5,9 @@ import { AuthController } from '@/application/controller/AuthController';
 import { RegisterDoctorUseCase } from '@/application/use-cases/user/auth/RegisterDoctor';
 import { RegisterPatientUseCase } from '@/application/use-cases/user/auth/RegisterPatient';
 import { UserRepository } from '@/core/repositories/UserRepository';
-import { Module } from '@nestjs/common'
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common'
 import { IAuthService } from '@/core/services/IAuthService';
+import { AuthMiddleware } from '@/application/middleware/auth-middleware';
 
 @Module({
     controllers: [AuthController],
@@ -17,4 +18,14 @@ import { IAuthService } from '@/core/services/IAuthService';
         { provide: IAuthService, useClass: AuthService },
         { provide: UserRepository, useClass: UserRepositoryPrisma }]
 })
-export class AuthModule { }
+export class AuthModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer
+            .apply(AuthMiddleware)
+            .forRoutes(
+                { path: 'medicos/:id/horarios', method: RequestMethod.POST },
+                { path: 'medicos/:id/horarios', method: RequestMethod.GET },
+                { path: 'medicos/:id/agendamentos', method: RequestMethod.GET }
+            )
+    }
+}

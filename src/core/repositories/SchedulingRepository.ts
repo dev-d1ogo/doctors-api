@@ -5,4 +5,5 @@ export abstract class SchedulingRepository {
     abstract findByPatientId(patientId: string): Promise<Scheduling[]>
     abstract hasConflict(doctorId: string, dateTime: Date): Promise<boolean>
     abstract save(scheduling: Scheduling): Promise<void>
+
 }

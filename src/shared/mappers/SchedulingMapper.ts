@@ -1,3 +1,4 @@
+import { SchedulingResponseDTO } from "@/application/dto/scheduling-response.dto"
 import { Scheduling } from "@/core/entities/Scheduling"
 
 interface SchedulingRaw {
@@ -26,12 +27,16 @@ export class SchedulingMapper {
         }
     }
 
-    static toHttp(scheduling: Scheduling) {
+    static toHttp(scheduling: Scheduling): SchedulingResponseDTO {
         return {
             id: scheduling.id,
             doctorId: scheduling.doctorId,
             patientId: scheduling.patientId,
-            dateTime: scheduling.dateTime
+            dateTime: scheduling.dateTime.toISOString()
         }
+    }
+
+    static toResponseList(schedulings: Scheduling[]): SchedulingResponseDTO[] {
+        return schedulings.map(this.toHttp)
     }
 }

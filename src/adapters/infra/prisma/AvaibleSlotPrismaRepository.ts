@@ -8,6 +8,16 @@ import { AvailableSlotMapper } from "@/shared/mappers/AvaibleSlotMapper"
 
 
 export class AvailableSlotRepositoryPrisma implements AvailableSlotRepository {
+    async findById(id: string): Promise<AvailableSlot | null> {
+        const result = await prismaClient.availableSlot.findUnique({
+            where: { id }
+        })
+
+        if (!result) return null
+
+        return AvailableSlotMapper.toDomain(result)
+    }
+
     async findByDoctorId(doctorId: string): Promise<AvailableSlot[]> {
         try {
             const slots = await prismaClient.availableSlot.findMany({ where: { doctorId } })
