@@ -21,6 +21,25 @@ export class SchedulingRepositoryPrisma implements SchedulingRepository {
         }
     }
 
+    async findByIdWithRelations(id: string): Promise<SchedulingWithUserData | null> {
+        try {
+            const record = await prismaClient.scheduling.findUnique({
+                where: { id },
+                include: {
+                    doctor: { select: { id: true, name: true, email: true } },
+                    patient: { select: { id: true, name: true, email: true } }
+                }
+            })
+
+            return record ? SchedulingMapper.toDomainWithIncludes(record) : null
+        } catch (error) {
+            throw new ApplicationError({
+                message: 'Erro ao buscar agendamento por ID (com includes)',
+                code: 500,
+                type: SchedulingErrorType.SCHEDULING_NOT_FOUND
+            })
+        }
+    }
     async findByPatientId(patientId: string): Promise<Scheduling[]> {
         try {
             const records = await prismaClient.scheduling.findMany({ where: { patientId } })
@@ -72,6 +91,8 @@ export class SchedulingRepositoryPrisma implements SchedulingRepository {
             })
         }
     }
+
+
 
     async hasConflict(doctorId: string, dateTime: Date): Promise<boolean> {
         try {

@@ -11,6 +11,8 @@ import { AuthService } from '@/adapters/auth/AuthService'
 import { CreateSchedulingUseCase } from '@/application/use-cases/scheduling/CreateSchedulingUseCase'
 import { AvailableSlotRepository } from '@/core/repositories/AvaibleSlotRepository'
 import { AvailableSlotRepositoryPrisma } from '@/adapters/infra/prisma/AvaibleSlotPrismaRepository'
+import { SchedulingGateway } from '@/adapters/socket/SchedulingGateway'
+import { SchedulingSocketService } from '@/adapters/socket/SchedulingService'
 
 @Module({
     controllers: [SchedulingController],
@@ -19,6 +21,8 @@ import { AvailableSlotRepositoryPrisma } from '@/adapters/infra/prisma/AvaibleSl
         GetSchedulingsByDoctorUseCase,
         GetSchedulingsByPatientUseCase,
         CreateSchedulingUseCase,
+        SchedulingGateway,             // ✅ necessário
+        SchedulingSocketService,
         { provide: SchedulingRepository, useClass: SchedulingRepositoryPrisma },
         { provide: AvailableSlotRepository, useClass: AvailableSlotRepositoryPrisma },
         { provide: IAuthService, useClass: AuthService },

@@ -8,4 +8,6 @@ export abstract class SchedulingRepository {
     abstract findByDoctorIdWithRelations(doctorId: string): Promise<SchedulingResponseDTOWithIncludes[]>
     abstract hasConflict(doctorId: string, dateTime: Date): Promise<boolean>
     abstract save(scheduling: Scheduling): Promise<void>
+    abstract findByIdWithRelations(id: string): Promise<SchedulingWithUserData | null>
+
 }
