@@ -24,7 +24,8 @@ export class AuthService implements IAuthService {
         const payload = {
             sub: user.id,
             email: user.email,
-            role: user.role
+            role: user.role,
+            name: user.name
         }
 
         return jwt.sign(payload, this.secret, {
@@ -37,6 +38,7 @@ export class AuthService implements IAuthService {
             const decoded = jwt.verify(token, this.secret) as jwt.JwtPayload
 
             return {
+                name: decoded.name,
                 id: decoded.sub as string,
                 email: decoded.email,
                 role: decoded.role as UserRole
