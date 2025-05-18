@@ -5,3 +5,4 @@ export const CreateSchedulingSchema = z.object({
 })
 
 export type CreateSchedulingDTO = z.infer<typeof CreateSchedulingSchema>
+

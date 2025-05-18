@@ -18,12 +18,14 @@ export class SchedulingController {
         const validated = RequestValidator.validate<UserJwt>(req.user, SchedulingUserSchema)
         return this.getSchedulingsService.execute(validated)
     }
+
     @Post()
     async create(@Req() req: Request, @Body() body: any) {
-        console.log(req.body, req.user)
-
         const user = RequestValidator.validate<SchedulingUserDTO>(req.user, SchedulingUserSchema)
         const data = RequestValidator.validate<CreateSchedulingDTO>(body, CreateSchedulingSchema)
+
+        await this.getSchedulingsService.execute(req.user!)
+
 
         if (user.role !== 'PATIENT') {
             throw new ApplicationError({

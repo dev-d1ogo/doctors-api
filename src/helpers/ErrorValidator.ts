@@ -18,7 +18,6 @@ export class RequestValidator {
                     code: 400,
                     type: "ValidationError",
                     errors: error.issues.map((e) => {
-                        console.log(e, "Erro a direita")
                         const error: ValidationErrorDescription = {
                             code: e.code,
                             message: e.message,
